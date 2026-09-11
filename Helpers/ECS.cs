@@ -40,14 +40,19 @@ namespace ECS
     {
         public Window window = window;
         public List<Model> Models = new List<Model>();
+        public List<PointLight> Lights = new List<PointLight>();
 
         public void Load()
         {
             for (int i=0; i<Models.Count; i++)
             {
                 Models[i].Enabled = true;
-
                 window.Models.Add(Models[i]);
+            }
+
+            for (int i=0; i<Lights.Count; i++)
+            {
+                window.lighting.Add(Lights[i].Position, Lights[i].Radius);
             }
         }
 
@@ -58,6 +63,11 @@ namespace ECS
                 Models[i].Enabled = false;
 
                 window.Models.Remove(Models[i]);
+            }
+
+            for (int i=0; i<Lights.Count; i++)
+            {
+                window.lighting = new Lighting();
             }
         }
     }

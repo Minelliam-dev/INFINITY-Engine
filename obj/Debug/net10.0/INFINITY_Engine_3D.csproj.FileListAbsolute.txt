@@ -33,3 +33,4 @@ C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\obj\Debu
 C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\obj\Debug\net10.0\INFINITY_Engine_3D.pdb
 C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\obj\Debug\net10.0\INFINITY_Engine_3D.genruntimeconfig.cache
 C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\obj\Debug\net10.0\ref\INFINITY_Engine_3D.dll
+C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\obj\Debug\net10.0\INFINITY_Engine_3D.sourcelink.json

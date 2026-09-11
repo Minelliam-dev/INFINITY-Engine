@@ -44,7 +44,7 @@ public class Window : GameWindow
 
     public List<Model> Models = new List<Model>();
 
-    Lighting lighting = new Lighting();
+    public Lighting lighting = new Lighting();
 
     //----------Variables----------
 
@@ -323,15 +323,11 @@ public class Window : GameWindow
         //enable depth testing
         GL.Enable(EnableCap.DepthTest);
 
-        // Test lights
-        lighting.Add(
-            new Vector3(0, 0, 1),
-            4f
-        );
+        GL.Enable(EnableCap.Blend);
 
-        lighting.Add(
-            new Vector3(2, 0, 0),
-            2f
+        GL.BlendFunc(
+            BlendingFactor.SrcAlpha,
+            BlendingFactor.OneMinusSrcAlpha
         );
 
         //initialize texture parameters
