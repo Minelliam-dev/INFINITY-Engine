@@ -17,10 +17,14 @@ namespace ECS
         public float[] Vertices = [];
         public int[] Indices = [];
 
-        public Model(string Path, Vector3 Position, Scene ParentScene, string TexturePath)
+        public bool IsTransparent;
+
+        public Model(string Path, Vector3 Position, Scene ParentScene, string TexturePath, bool Transparent=false)
         {   
             position = Position;
             path = Path;
+
+            IsTransparent = Transparent;
 
             texturePath = TexturePath;
 

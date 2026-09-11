@@ -190,6 +190,29 @@ public class Window : GameWindow
         GL.Viewport(0, 0, e.Width, e.Height);
     }
     
+    void RenderObject(Model Object)
+    {
+        float[] vertices = Object.Vertices;
+            int[] indices = Object.Indices;
+        
+            Object.texture.UseWithoutLoad();
+            
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, variables.ElementBufferObject);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, variables.VertexBufferObject);
+            //render the vertex data
+            variables.shaders.Use();
+            //Provide the vertex shader with the required matrices to calculate the vertex positions
+            Providematrices(Object);
+            GL.BindVertexArray(variables.VertexArrayObject);
+                GL.DrawElements(
+                PrimitiveType.Triangles,
+                indices.Length,
+                DrawElementsType.UnsignedInt,
+                0
+            );
+    }
     void Render()
     {
         GL.Clear(
@@ -197,36 +220,23 @@ public class Window : GameWindow
             ClearBufferMask.DepthBufferBit
         );
         
+        List<Model> TransparentModels = new List<Model>();
+        
         for (int i=0; i<Models.Count; i++)
         {
             if (Models[i].Enabled)
             {
-                float[] vertices = Models[i].Vertices;
-                int[] indices = Models[i].Indices;
-            
-                Models[i].texture.UseWithoutLoad();
-                
-                GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
-
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, variables.ElementBufferObject);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
-
-                GL.BindBuffer(BufferTarget.ArrayBuffer, variables.VertexBufferObject);
-
-                //render the vertex data
-                variables.shaders.Use();
-
-                //Provide the vertex shader with the required matrices to calculate the vertex positions
-                Providematrices(Models[i]);
-
-                GL.BindVertexArray(variables.VertexArrayObject);
-                    GL.DrawElements(
-                    PrimitiveType.Triangles,
-                    indices.Length,
-                    DrawElementsType.UnsignedInt,
-                    0
-                );
+                if (!Models[i].IsTransparent) RenderObject(Models[i]);
+                else
+                {
+                    TransparentModels.Add(Models[i]);
+                }
             }
+        }
+
+        for (int i=0; i<TransparentModels.Count; i++)
+        {   
+            RenderObject(TransparentModels[(TransparentModels.Count-1) - i]);
         }
     }
     void CreateVBO()
