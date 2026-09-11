@@ -9,7 +9,7 @@ public class Shader
     int FragmentShader;
     int VertexShader;
 
-    private readonly Dictionary<string, int> _uniformLocations;
+    private readonly Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
 
     private bool disposedValue = false;
 

@@ -5,7 +5,7 @@ public class Debug
 {
     static public void Log<T>(T Output)
     {
-        Console.WriteLine(Output.ToString());
+        Console.WriteLine(Output?.ToString());
     }
 
     static public void Test()
