@@ -46,6 +46,11 @@ namespace ECS
         public List<Model> Models = new List<Model>();
         public List<PointLight> Lights = new List<PointLight>();
 
+        public Action UpdateFunction = Debug.None;
+        public Action StartFunction = Debug.None;
+
+        bool FirstIteration = true;
+
         public void Load()
         {
             for (int i=0; i<Models.Count; i++)
@@ -73,6 +78,15 @@ namespace ECS
             {
                 window.lighting = new Lighting();
             }
+        }
+
+        public void Update()
+        {
+            if (UpdateFunction != Debug.None && !FirstIteration) UpdateFunction();
+
+            if (FirstIteration && StartFunction != Debug.None) StartFunction();
+
+            FirstIteration = false;
         }
     }
 }

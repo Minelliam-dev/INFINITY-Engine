@@ -23,4 +23,9 @@ public class Debug
 
         Debug.Log("Function: " + FunctionName + " done in: " + stopwatch.Elapsed);
     }
+
+    static public void None()
+    {
+        return;
+    }
 }
