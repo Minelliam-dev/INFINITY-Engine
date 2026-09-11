@@ -10,7 +10,7 @@ class Variables(int VertexBufferObject, int VertexArrayObject)
     public int VertexBufferObject = VertexBufferObject;
     public int VertexArrayObject = VertexArrayObject;
 
-    public Shader shaders;
+    public Shader shaders = new Shader("", "", true);
     public int ElementBufferObject;
     public Vector2 WindowSize;
     public bool FirstMouseMove = true;

@@ -13,9 +13,11 @@ public class Shader
 
     private bool disposedValue = false;
 
-    public Shader(string vertexPath, string fragmentPath)
+    public Shader(string vertexPath, string fragmentPath, bool Empty=false)
     {
         
+        if (Empty) return;
+
         //Get the shaders from the seperate files in the shaders directory
         string VertexShaderSource = File.ReadAllText(vertexPath);
         string FragmentShaderSource = File.ReadAllText(fragmentPath);
