@@ -90,7 +90,7 @@ public class Window : GameWindow
         CurrentScene = new Scene(this);
 
         //Initialize the camera
-        camera = new Camera(new Vector3(0, 0, 3f), 60f, this);
+        camera = new Camera(new Vector3(-4, 0, 0), 60f, this);
     }
     
     public void ChangeScene(Scene NewScene)
@@ -226,7 +226,7 @@ public class Window : GameWindow
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
 
         //Set the background color
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        GL.ClearColor(BackgroundColor.X, BackgroundColor.Y, BackgroundColor.Z, 1f);
     }
     void CreateVAO()
     {
