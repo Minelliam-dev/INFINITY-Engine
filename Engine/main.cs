@@ -70,6 +70,12 @@ public class Window : GameWindow
     //Lighting is just a class providing a basic list of PointLights with some convinient functions
     public Lighting lighting = new Lighting();
 
+    //A variable to choose between multiple pre made (fragment) shaders 
+    public int ShaderID = 0;
+
+    //The background color
+    Vector3 BackgroundColor = new Vector3();
+
 
     //----------Variables----------
 
@@ -299,7 +305,26 @@ public class Window : GameWindow
         CreateVBO();
 
         //Create the vertex and fragment shaders
-        variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Fragment.glsl");
+        if (ShaderID == 0) //Normal
+        {
+            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Base-Fragment.glsl");
+        }
+        if (ShaderID == 1) //Toon shader
+        {
+            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Toon-Fragment.glsl");
+        }
+        if (ShaderID == 2) //Normal but without lighting
+        {
+            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/NoLighting-Fragment.glsl");
+        }
+        if (ShaderID == 3) //Grayscale version
+        {
+            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Grayscale-Fragment.glsl");
+        }
+        if (ShaderID == 4) //Inverted colors
+        {
+            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Inverted-Fragment.glsl");
+        }
 
         //create the vertex array object
         CreateVAO();
