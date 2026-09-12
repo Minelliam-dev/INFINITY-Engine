@@ -17,6 +17,11 @@ class Variables(int VertexBufferObject, int VertexArrayObject)
     public Vector2 lastMousePos;
     public float pitch = 0;
     public float yaw = 0;
+
+    public Matrix4 model;
+    public Matrix4 view;
+    public Matrix4 projection;
+
 }
 
 //I thought naming it Game was not very fit for a game engine so i renamed it to Window
@@ -39,8 +44,9 @@ public class Window : GameWindow
     
     Camera camera;
 
-    float FPS = 0;
-    float DeltaTime = 0;
+    public float FPS = 0;
+    public float DeltaTime = 0;
+    public float fpsTimer = 0;
 
     public List<Model> Models = new List<Model>();
 
@@ -141,7 +147,7 @@ public class Window : GameWindow
     {
         FPS = 1f / (float)e.Time;
 
-        Debug.Log(FPS);
+        DeltaTime = (float)e.Time;
         
         //Check if the Escape key is pressed
         if (KeyboardState.IsKeyDown(Keys.Escape))
@@ -193,25 +199,33 @@ public class Window : GameWindow
     void RenderObject(Model Object)
     {
         float[] vertices = Object.Vertices;
-            int[] indices = Object.Indices;
+        int[] indices = Object.Indices;
         
-            Object.texture.UseWithoutLoad();
+        //Control = 1.5
+        //No textures = 2.5
+        //No shaders = 1.5
+        //No models = 2.5
+        //No matrices = 1.7
+
+        Object.texture.UseWithoutLoad(Object.TextureHandle);
             
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, variables.ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, variables.VertexBufferObject);
-            //render the vertex data
-            variables.shaders.Use();
-            //Provide the vertex shader with the required matrices to calculate the vertex positions
-            Providematrices(Object);
-            GL.BindVertexArray(variables.VertexArrayObject);
-                GL.DrawElements(
-                PrimitiveType.Triangles,
-                indices.Length,
-                DrawElementsType.UnsignedInt,
-                0
-            );
+        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, variables.VertexBufferObject);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, variables.ElementBufferObject);
+            
+        //render the vertex data
+        variables.shaders.Use();
+            
+        //Provide the vertex shader with the required matrices to calculate the vertex positions
+        Providematrices(Object);
+        GL.BindVertexArray(variables.VertexArrayObject);
+        GL.DrawElements(
+            PrimitiveType.Triangles,
+            indices.Length,
+            DrawElementsType.UnsignedInt,
+            0
+        );
     }
     void Render()
     {
@@ -305,12 +319,11 @@ public class Window : GameWindow
     void Providematrices(Model CurrentModel)
     {
         Matrix4 model = Matrix4.CreateScale(CurrentModel.scale) * Matrix4.CreateRotationX(CurrentModel.rotation.X) * Matrix4.CreateRotationY(CurrentModel.rotation.Y) * Matrix4.CreateRotationZ(CurrentModel.rotation.Z) * Matrix4.CreateTranslation(CurrentModel.position);
-        Matrix4 view = camera.view;
-        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(camera.FOV), variables.WindowSize.X / variables.WindowSize.Y, 0.1f, 100.0f);
+        variables.view = camera.view;
 
         variables.shaders.SetMatrix4("model", model);
-        variables.shaders.SetMatrix4("view", view);
-        variables.shaders.SetMatrix4("projection", projection);
+        variables.shaders.SetMatrix4("view", variables.view);
+        variables.shaders.SetMatrix4("projection", variables.projection);
     } 
     //Runs once before normal program execution
     protected override void OnLoad()
@@ -339,6 +352,14 @@ public class Window : GameWindow
             BlendingFactor.SrcAlpha,
             BlendingFactor.OneMinusSrcAlpha
         );
+
+        variables.model = Matrix4.CreateScale(1f);
+        variables.view = camera.view;
+        variables.projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(camera.FOV), variables.WindowSize.X / variables.WindowSize.Y, 0.1f, 100.0f);
+
+        variables.shaders.SetMatrix4("view", variables.view);
+        variables.shaders.SetMatrix4("model", variables.model);
+        variables.shaders.SetMatrix4("projection", variables.projection);
 
         //initialize texture parameters
         TextureInit();

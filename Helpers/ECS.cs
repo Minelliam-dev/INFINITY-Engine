@@ -17,6 +17,8 @@ namespace ECS
         public float[] Vertices = [];
         public int[] Indices = [];
 
+        public int TextureHandle;
+
         public bool IsTransparent;
 
         public Model(string Path, Vector3 Position, Scene ParentScene, string TexturePath, bool Transparent=false)
@@ -30,7 +32,9 @@ namespace ECS
 
             texture = new Texture();
 
+            //texture.StartImageStuff();
             texture.Load(TexturePath);
+            TextureHandle = texture.Handle;
 
             OBJLoader model = new OBJLoader(Path);
 

@@ -10,7 +10,7 @@ public class Texture
 
     public void StartImageStuff()
     {
-        Handle = GL.GenTexture();   
+        Handle = GL.GenTexture();
     }
     public ImageResult Load(string Path)
     {
@@ -35,11 +35,11 @@ public class Texture
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
     }
 
-    public void UseWithoutLoad()
+    public void UseWithoutLoad(int handle)
     {
-        GL.ActiveTexture(TextureUnit.Texture0);
+        //GL.ActiveTexture(TextureUnit.Texture0);
 
-        GL.BindTexture(TextureTarget.Texture2D, Handle);
+        GL.BindTexture(TextureTarget.Texture2D, handle);
 
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, ResultOfLoading.Width, ResultOfLoading.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, ResultOfLoading.Data);
     }
