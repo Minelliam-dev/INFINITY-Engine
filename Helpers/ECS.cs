@@ -1,3 +1,4 @@
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace ECS
@@ -21,6 +22,11 @@ namespace ECS
 
         public bool IsTransparent;
 
+        public int VBO;
+        public int EBO;
+        public int VAO;
+        public int IndexCount;
+
         public Model(string Path, Vector3 Position, Scene ParentScene, string TexturePath, bool Transparent=false)
         {   
             position = Position;
@@ -39,6 +45,54 @@ namespace ECS
             OBJLoader model = new OBJLoader(Path);
 
             model.GetModel(out Vertices, out Indices);
+
+            IndexCount = Indices.Length;
+
+            VAO = GL.GenVertexArray();
+            VBO = GL.GenBuffer();
+            EBO = GL.GenBuffer();
+
+            GL.BindVertexArray(VAO);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
+            GL.BufferData(
+                BufferTarget.ArrayBuffer,
+                Vertices.Length * sizeof(float),
+                Vertices,
+                BufferUsageHint.StaticDraw
+            );
+
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
+            GL.BufferData(
+                BufferTarget.ElementArrayBuffer,
+                Indices.Length * sizeof(int),
+                Indices,
+                BufferUsageHint.StaticDraw
+            );
+
+
+
+            GL.VertexAttribPointer(
+                0,
+                3,
+                VertexAttribPointerType.Float,
+                false,
+                5 * sizeof(float),
+                0
+            );
+
+            GL.EnableVertexAttribArray(0);
+
+            GL.VertexAttribPointer(
+                1,
+                2,
+                VertexAttribPointerType.Float,
+                false,
+                5 * sizeof(float),
+                3 * sizeof(float)
+            );
+
+            GL.EnableVertexAttribArray(1);
         
             ParentScene.Models.Add(this);
         }
@@ -65,7 +119,7 @@ namespace ECS
 
             for (int i=0; i<Lights.Count; i++)
             {
-                window.lighting.Add(Lights[i].Position, Lights[i].Radius);
+                window.lighting.Add(Lights[i].position, Lights[i].radius, Lights[i].color);
             }
         }
 

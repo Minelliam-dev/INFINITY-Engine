@@ -124,31 +124,24 @@ public class Window : GameWindow
     
     void RenderObject(Model Object)
     {
-        float[] vertices = Object.Vertices;
-        int[] indices = Object.Indices;
-        
         //Control = 1.5
         //No textures = 2.5
         //No shaders = 1.5
         //No models = 2.5
         //No matrices = 1.7
 
-        Object.texture.UseWithoutLoad(Object.TextureHandle);
-            
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, variables.VertexBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, variables.ElementBufferObject);
-            
         //render the vertex data
         variables.shaders.Use();
-            
-        //Provide the vertex shader with the required matrices to calculate the vertex positions
+
         Providematrices(Object);
-        GL.BindVertexArray(variables.VertexArrayObject);
+
+        Object.texture.UseWithoutLoad(Object.TextureHandle);
+        
+        GL.BindVertexArray(Object.VAO);
+
         GL.DrawElements(
             PrimitiveType.Triangles,
-            indices.Length,
+            Object.IndexCount,
             DrawElementsType.UnsignedInt,
             0
         );

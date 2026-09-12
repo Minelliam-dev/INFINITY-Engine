@@ -7,9 +7,10 @@ in vec3 fragWorldPos;
 
 uniform sampler2D texture0;
 
-#define MAX_LIGHTS 32
+#define MAX_LIGHTS 64
 
 uniform vec3 lightPositions[MAX_LIGHTS];
+uniform vec3 lightColors[MAX_LIGHTS];
 uniform float lightStrengths[MAX_LIGHTS];
 uniform int lightCount;
 
@@ -18,7 +19,7 @@ void main()
     vec4 texColor = texture(texture0, texCoord);
 
     // Minimum brightness so areas without lights aren't completely black.
-    float brightness = 0.1;
+    vec4 brightness;
 
     for (int i = 0; i < lightCount; i++)
     {
@@ -30,13 +31,10 @@ void main()
         float light =
             lightStrengths[i] / (distanceSquared + 1.0);
 
-        brightness += light;
+        brightness.rbg += (lightColors[i] * (light));
     }
 
     brightness = clamp(brightness, 0.0, 1.0);
 
-    outputColor = vec4(
-        texColor.rgb * brightness,
-        texColor.a
-    );
+    outputColor = texColor + brightness;
 }

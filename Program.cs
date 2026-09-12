@@ -17,7 +17,7 @@ TestScene.UpdateFunction = Update;
 
 SecondScene.UpdateFunction = Update;
 
-for (int i=0; i<(20); i++)
+for (int i=0; i<(6); i++)
 {
     Model model  = new Model("./Engine/Prefabs/Shapes/Cube.obj", new Vector3(0, 0, (i*3)), TestScene, "./Engine/Debug/Debug-01.png");
     Model model2 = new Model("./Engine/Prefabs/Shapes/Cone.obj", new Vector3(3, 0, (i*3)), TestScene, "./Engine/Debug/Debug-02.png");
@@ -27,15 +27,15 @@ for (int i=0; i<(20); i++)
     Model model6 = new Model("./Engine/Prefabs/Shapes/Torus.obj", new Vector3(15, 0, (i*3)), TestScene, "./Engine/Debug/Debug-02.png");
 }
 
-new Model("./Engine/Prefabs/Shapes/Torus.obj", new Vector3(15, 0, -3), SecondScene, "./Engine/Debug/Debug-02.png");
+new Model("./Engine/Prefabs/Shapes/Ocean.obj", new Vector3(30, 0, -30), SecondScene, "./Engine/Debug/Debug-02.png");
 
-TestScene.Lights.Add(new PointLight(new Vector3(-1, 0, 0), 2f));
-TestScene.Lights.Add(new PointLight(new Vector3(15, 0, 0), 4f));
-TestScene.Lights.Add(new PointLight(new Vector3(0, 15, 0), 20f));
+TestScene.Lights.Add(new PointLight(new Vector3(-2, 0, 0), 5f, new Vector3(0, 3, 0)));
+TestScene.Lights.Add(new PointLight(new Vector3(17, 2, 0), 5f, new Vector3(3, 0, 0)));
+TestScene.Lights.Add(new PointLight(new Vector3(0, 15, 0), 5f, new Vector3(0, 0, 3)));
 
-SecondScene.Lights.Add(new PointLight(new Vector3(-1, 0, 0), 2f));
-SecondScene.Lights.Add(new PointLight(new Vector3(15, 0, 0), 4f));
-SecondScene.Lights.Add(new PointLight(new Vector3(0, 15, 0), 20f));
+SecondScene.Lights.Add(new PointLight(new Vector3(-2, 0, 0), 5f, new Vector3(0, 3, 0)));
+SecondScene.Lights.Add(new PointLight(new Vector3(17, 2, 0), 5f, new Vector3(3, 0, 0)));
+SecondScene.Lights.Add(new PointLight(new Vector3(0, 15, 0), 5f, new Vector3(0, 0, 3)));
 
 window.CurrentScene = TestScene;
 
