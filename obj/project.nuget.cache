@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "l9lkFByfVjE=",
+  "dgSpecHash": "OHZpoKjyLuU=",
   "success": true,
   "projectFilePath": "C:\\Users\\willi\\Desktop\\Assets\\Active scripts\\C# s#it\\INFINITY_Engine_3D\\INFINITY_Engine_3D.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\willi\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.9\\microsoft.net.illink.tasks.10.0.9.nupkg.sha512",
     "C:\\Users\\willi\\.nuget\\packages\\naudio\\3.1.0\\naudio.3.1.0.nupkg.sha512",
     "C:\\Users\\willi\\.nuget\\packages\\naudio.core\\3.1.0\\naudio.core.3.1.0.nupkg.sha512",
     "C:\\Users\\willi\\.nuget\\packages\\naudio.midi\\3.1.0\\naudio.midi.3.1.0.nupkg.sha512",
@@ -20,10 +19,7 @@
     "C:\\Users\\willi\\.nuget\\packages\\opentk.windowing.desktop\\4.9.4\\opentk.windowing.desktop.4.9.4.nupkg.sha512",
     "C:\\Users\\willi\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.9.4\\opentk.windowing.graphicslibraryframework.4.9.4.nupkg.sha512",
     "C:\\Users\\willi\\.nuget\\packages\\stbimagesharp\\2.30.16\\stbimagesharp.2.30.16.nupkg.sha512",
-    "C:\\Users\\willi\\.nuget\\packages\\system.numerics.tensors\\9.0.0\\system.numerics.tensors.9.0.0.nupkg.sha512",
-    "C:\\Users\\willi\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\10.0.9\\microsoft.netcore.app.runtime.linux-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\willi\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\10.0.9\\microsoft.aspnetcore.app.runtime.linux-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\willi\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\10.0.9\\microsoft.netcore.app.host.linux-x64.10.0.9.nupkg.sha512"
+    "C:\\Users\\willi\\.nuget\\packages\\system.numerics.tensors\\9.0.0\\system.numerics.tensors.9.0.0.nupkg.sha512"
   ],
   "logs": []
 }
