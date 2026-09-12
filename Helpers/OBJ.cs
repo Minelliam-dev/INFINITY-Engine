@@ -1,5 +1,7 @@
 using OpenTK.Mathematics;
 
+
+//this class is just a mess, i wont bother commenting them because i am propably going to re-write it anyway
 public class OBJLoader(string FilePath)
 {
     public string Path = FilePath;

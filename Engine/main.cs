@@ -5,6 +5,8 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
+//this class only exists because i did not want to make the window class messy, 
+//making this class messy instead. So i will not comment these variables
 class Variables(int VertexBufferObject, int VertexArrayObject)
 {
     public int VertexBufferObject = VertexBufferObject;
@@ -22,13 +24,19 @@ class Variables(int VertexBufferObject, int VertexArrayObject)
     public Matrix4 view;
     public Matrix4 projection;
 
+    public bool ClearScreen = true;
+
 }
 
 //I thought naming it Game was not very fit for a game engine so i renamed it to Window
 public class Window : GameWindow
 {
     //----------Variables----------
+    
+    //Variables is just my solution to make this class less disgusting
     Variables variables = new Variables(0, 0);
+    
+    //Vertices is just here in case there is no model provided
     public float[] vertices =
     {
         //Position          Texture coordinates
@@ -37,22 +45,31 @@ public class Window : GameWindow
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
     };
-    public int[] indices = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
+    //Indices is just here in case there is no model provided
+    public int[] indices = {
+        0, 1, 3,
+        1, 2, 3
     };
     
+    //Store the camera
     public Camera camera;
 
+    //The FPS and deltatime variables
     public float FPS = 0;
     public float DeltaTime = 0;
-    public float fpsTimer = 0;
 
+    //A list of models to be rendered
     public List<Model> Models = new List<Model>();
 
+    //the current scene to be rendered
     public Scene CurrentScene;
 
+    //Whether the provided textures should be rendered using the nearest or linear filter
+    public bool UseNearest = true;
+
+    //Lighting is just a class providing a basic list of PointLights with some convinient functions
     public Lighting lighting = new Lighting();
+
 
     //----------Variables----------
 
@@ -60,29 +77,42 @@ public class Window : GameWindow
     //Reference the pre-made window class provided by OpenTK to create a window
     public Window(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title }) 
     { 
+        //Set the windowsize variable to calculate the camera FOV
         variables.WindowSize = new Vector2(width, height); 
 
+        //Create a scene in case program.cs does not provide one
         CurrentScene = new Scene(this);
 
+        //Initialize the camera
         camera = new Camera(new Vector3(0, 0, 3f), 60f, this);
     }
     
     public void ChangeScene(Scene NewScene)
     {
+        //return if the new scene is the current scene
         if (NewScene == CurrentScene) return;
         
+        
+        //Unload the old scene
         CurrentScene.UnLoad();
+        
+        //Set the current scene, to the new scene
         CurrentScene = NewScene;
+        
+        //Load the new scene
         CurrentScene.Load();
     }
     
     //Runs every frame
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
+        //Update the FPS variable based on DeltaTime
         FPS = 1f / (float)e.Time;
 
+        //Update the windows DeltaTime variable using the FrameArguments passed in from OpenGL
         DeltaTime = (float)e.Time;
 
+        //Update the current scene specified in the window class
         CurrentScene.Update();
 
         //Update the camera
@@ -95,10 +125,11 @@ public class Window : GameWindow
     //Also runs every frame but also renders to the screen
     protected override void OnRenderFrame(FrameEventArgs e)
     {
+        //OpenGL stuff
         base.OnRenderFrame(e);
 
         //set the backround
-        GL.Clear(ClearBufferMask.ColorBufferBit);
+        if (variables.ClearScreen) GL.Clear(ClearBufferMask.ColorBufferBit);
 
         lighting.Upload(variables.shaders);
         
@@ -124,21 +155,19 @@ public class Window : GameWindow
     
     void RenderObject(Model Object)
     {
-        //Control = 1.5
-        //No textures = 2.5
-        //No shaders = 1.5
-        //No models = 2.5
-        //No matrices = 1.7
-
         //render the vertex data
         variables.shaders.Use();
 
+        //Set the model matrix to account for transformations and rotations
         Providematrices(Object);
 
+        //Set the current texture to the objects specified texture
         Object.texture.UseWithoutLoad(Object.TextureHandle);
         
+        //Set the next object to be rendered 
         GL.BindVertexArray(Object.VAO);
 
+        //draw the current object
         GL.DrawElements(
             PrimitiveType.Triangles,
             Object.IndexCount,
@@ -148,27 +177,34 @@ public class Window : GameWindow
     }
     void Render()
     {
-        GL.Clear(
-            ClearBufferMask.ColorBufferBit |
-            ClearBufferMask.DepthBufferBit
-        );
+        //Reset the screen
+        if (variables.ClearScreen) GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
+        //Create a list of models that have the IsTransparent flag enabled
         List<Model> TransparentModels = new List<Model>();
         
+        //Loop through all the objects
         for (int i=0; i<Models.Count; i++)
         {
+            //Check if the current object is enabled
             if (Models[i].Enabled)
             {
+                
+                //If the object is transparent, skip it and put it into the list we created,
+                //otherwise render it
                 if (!Models[i].IsTransparent) RenderObject(Models[i]);
                 else
                 {
+                    //add the model to the list of transparent objects
                     TransparentModels.Add(Models[i]);
                 }
             }
         }
 
+        //loop trough all the transparent objects to be rendered after all the other props
         for (int i=0; i<TransparentModels.Count; i++)
         {   
+            //render the objects in the list in reverse order
             RenderObject(TransparentModels[(TransparentModels.Count-1) - i]);
         }
     }
@@ -214,22 +250,25 @@ public class Window : GameWindow
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
     }
     void TextureInit()
-    {
-        bool UseNearest = true;
-        
+    {   
+        //Create the texture and apply it
         Texture texture = new Texture();
         texture.Use("./Engine/Debug/Missing_texture.png");
         
+        //Set the texture to repeat
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
+        //check if you want to use the nearest filter
         if (UseNearest) 
         {
+            //Set both texture parameters to nearest
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
         }
         else 
         {
+            //Set both texture parameters to Linear
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         }
@@ -237,13 +276,16 @@ public class Window : GameWindow
 
     void Providematrices(Model CurrentModel)
     {
-        Matrix4 model = Matrix4.CreateScale(CurrentModel.scale) * Matrix4.CreateRotationX(CurrentModel.rotation.X) * Matrix4.CreateRotationY(CurrentModel.rotation.Y) * Matrix4.CreateRotationZ(CurrentModel.rotation.Z) * Matrix4.CreateTranslation(CurrentModel.position);
+        //Generate a new Model and view matrix for object transformation
+        Matrix4 model = Matrix4.CreateScale(CurrentModel.scale) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(CurrentModel.rotation.X)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(CurrentModel.rotation.Y)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(CurrentModel.rotation.Z)) * Matrix4.CreateTranslation(CurrentModel.position);
         variables.view = camera.view;
 
+        //send the matrices to the shaders
         variables.shaders.SetMatrix4("model", model);
         variables.shaders.SetMatrix4("view", variables.view);
         variables.shaders.SetMatrix4("projection", variables.projection);
     } 
+    
     //Runs once before normal program execution
     protected override void OnLoad()
     {
@@ -268,17 +310,21 @@ public class Window : GameWindow
         //enable depth testing
         GL.Enable(EnableCap.DepthTest);
 
+        //enable blending
         GL.Enable(EnableCap.Blend);
 
+        //Enable alpha textures
         GL.BlendFunc(
             BlendingFactor.SrcAlpha,
             BlendingFactor.OneMinusSrcAlpha
         );
 
+        //Create the matrices
         variables.model = Matrix4.CreateScale(1f);
         variables.view = camera.view;
         variables.projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(camera.FOV), variables.WindowSize.X / variables.WindowSize.Y, 0.1f, 100.0f);
 
+        //Give the matrices to the shaders
         variables.shaders.SetMatrix4("view", variables.view);
         variables.shaders.SetMatrix4("model", variables.model);
         variables.shaders.SetMatrix4("projection", variables.projection);

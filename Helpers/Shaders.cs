@@ -4,18 +4,22 @@ using OpenTK.Mathematics;
 
 public class Shader
 {
+    //Shader handle
     int Handle;
 
+    //Fragment and vertex shader handles
     int FragmentShader;
     int VertexShader;
 
+    //The dictionary of locations for variables in shaders
     private readonly Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
 
+    //are the shaders deleted ?
     private bool disposedValue = false;
 
     public Shader(string vertexPath, string fragmentPath, bool Empty=false)
     {
-        
+        //this is just here because i wanted to get rid of a warning in main.cs because of null variables
         if (Empty) return;
 
         //Get the shaders from the seperate files in the shaders directory
@@ -94,16 +98,16 @@ public class Shader
         //get the number of uniforms
         GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
 
-        //
+        //loop through all the uniforms to get the entire uniformLocations list
         for (var i = 0; i < numberOfUniforms; i++)
         {
-            // get the name of this uniform,
+            //get the name of this uniform,
             var key = GL.GetActiveUniform(Handle, i, out _, out _);
 
-            // get the location,
+            //get the location,
             var location = GL.GetUniformLocation(Handle, key);
         
-            // and then add it to the dictionary.
+            //and then add it to the dictionary.
             _uniformLocations.Add(key, location);
         }
 
@@ -111,6 +115,7 @@ public class Shader
 
     public void Use()
     {
+        //Use the shaders
         GL.UseProgram(Handle);
     }
 
@@ -140,33 +145,41 @@ public class Shader
     //The function to delete the shader handle from outside this class
     public void Dispose()
     {
+        
+        //Delete the shaders
         Dispose(true);
+        //Skip the finalizer
         GC.SuppressFinalize(this);
     }
 
+    //get an attribute
     public int GetAttribLocation(string attribName)
     {
         return GL.GetAttribLocation(Handle, attribName);
     }
 
+    //Provide a Matrix to the shaders
     public void SetMatrix4(string name, Matrix4 data)
     {
         GL.UseProgram(Handle);
         GL.UniformMatrix4(_uniformLocations[name], true, ref data);
     }
 
+    //Provide an int variable to that shaders
     public void SetInt(string name, int value)
     {
         int location = GL.GetUniformLocation(Handle, name);
         GL.Uniform1(location, value);
     }
     
+    //Provide a float variable to the shaders
     public void SetFloat(string name, float value)
     {
         int location = GL.GetUniformLocation(Handle, name);
         GL.Uniform1(location, value);
     }
     
+    //Provide a vector3 variable to the shaders
     public void SetVector3(string name, Vector3 value)
     {
         int location = GL.GetUniformLocation(Handle, name);
