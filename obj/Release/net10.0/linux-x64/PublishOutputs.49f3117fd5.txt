@@ -1,0 +1,2 @@
+C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\bin\Release\net10.0\linux-x64\publish\libglfw.so.3
+C:\Users\willi\Desktop\Assets\Active scripts\C# s#it\INFINITY_Engine_3D\bin\Release\net10.0\linux-x64\publish\INFINITY_Engine_3D
