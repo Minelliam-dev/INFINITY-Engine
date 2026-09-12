@@ -50,6 +50,8 @@ public class Window : GameWindow
 
     public List<Model> Models = new List<Model>();
 
+    public Scene CurrentScene;
+
     public Lighting lighting = new Lighting();
 
     //----------Variables----------
@@ -59,6 +61,8 @@ public class Window : GameWindow
     public Window(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title }) 
     { 
         variables.WindowSize = new Vector2(width, height); 
+
+        CurrentScene = new Scene(this);
 
         camera = new Camera(new Vector3(0, 0, 3f), 60f, this);
     }
@@ -142,12 +146,23 @@ public class Window : GameWindow
         camera.Target = camera.Position + front;
     }
     
+    public void ChangeScene(Scene NewScene)
+    {
+        if (NewScene == CurrentScene) return;
+        
+        CurrentScene.UnLoad();
+        
+        CurrentScene = NewScene;
+    }
+    
     //Runs every frame
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
         FPS = 1f / (float)e.Time;
 
         DeltaTime = (float)e.Time;
+
+        CurrentScene.Update();
         
         //Check if the Escape key is pressed
         if (KeyboardState.IsKeyDown(Keys.Escape))
