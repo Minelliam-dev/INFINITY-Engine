@@ -4,7 +4,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 Window window = new Window(500, 500, "New, New game engine");
 
-window.VSync = OpenTK.Windowing.Common.VSyncMode.Off;
+window.VSync = OpenTK.Windowing.Common.VSyncMode.On;
 window.CursorState = OpenTK.Windowing.Common.CursorState.Grabbed;
 window.ShaderID = 1;
 
@@ -27,13 +27,17 @@ for (int i=0; i<(1); i++)
     //Model model6 = new Model("./Engine/Prefabs/Shapes/Torus.obj", new Vector3(15, 0, (i*3)), TestScene, "./Engine/Debug/Debug-02.png");
 }
 
-new Model("./Engine/Prefabs/Shapes/Monkey.obj", new Vector3(0, 0, 0), SecondScene, "./Engine/Debug/Debug-02.png");
+Model Monke = new Model("./Engine/Prefabs/Shapes/Monkey.obj", new Vector3(0, 0, 0), SecondScene, "./Engine/Debug/Debug-01.png");
+
+Monke.scale = 2f;
 
 TestScene.Lights.Add(new PointLight(new Vector3(-2, -1, 0), 1f, new Vector3(3, 0, 0)));
 TestScene.Lights.Add(new PointLight(new Vector3(2, -1, 0), 1f, new Vector3(0, 3, 0)));
 TestScene.Lights.Add(new PointLight(new Vector3(1, 1, 0), 1f, new Vector3(0, 0, 3)));
 
-SecondScene.Lights.Add(new PointLight(new Vector3(-2, 0, 0), 5f, new Vector3(0, 3, 0)));
+SecondScene.Lights.Add(new PointLight(new Vector3(-2, -1, 0), 1f, new Vector3(3, 0, 0)));
+SecondScene.Lights.Add(new PointLight(new Vector3(2, -1, 0), 1f, new Vector3(0, 3, 0)));
+SecondScene.Lights.Add(new PointLight(new Vector3(1, 1, 0), 1f, new Vector3(0, 0, 3)));
 
 window.CurrentScene = TestScene;
 window.Run();
