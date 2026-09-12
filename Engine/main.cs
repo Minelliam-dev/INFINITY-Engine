@@ -42,7 +42,7 @@ public class Window : GameWindow
         1, 2, 3    // second triangle
     };
     
-    Camera camera;
+    public Camera camera;
 
     public float FPS = 0;
     public float DeltaTime = 0;
@@ -66,93 +66,14 @@ public class Window : GameWindow
 
         camera = new Camera(new Vector3(0, 0, 3f), 60f, this);
     }
-
-    void PlayerInput(float Deltatime)
-    {
-        KeyboardState input = KeyboardState;
-
-        float speed = 3f * Deltatime;
-        
-        if (input.IsKeyDown(Keys.W))
-        {
-            camera.Position += camera.front * speed; //Forward 
-            camera.Target += camera.front * speed; //Forward 
-        }
-        if (input.IsKeyDown(Keys.S))
-        {
-            camera.Position -= camera.front * speed; //Forward 
-            camera.Target -= camera.front * speed; //Forward 
-        }
-
-        if (input.IsKeyDown(Keys.D))
-        {
-            camera.Position += camera.right * speed; //Forward 
-            camera.Target += camera.right * speed; //Forward 
-        }
-        if (input.IsKeyDown(Keys.A))
-        {
-            camera.Position -= camera.right * speed; //Forward 
-            camera.Target -= camera.right * speed; //Forward 
-        }
-
-        if (input.IsKeyDown(Keys.LeftShift))
-        {
-            camera.Position -= Vector3.UnitY * speed; //Forward 
-            camera.Target -= Vector3.UnitY * speed; //Forward 
-        }
-        if (input.IsKeyDown(Keys.Space))
-        {
-            camera.Position += Vector3.UnitY * speed; //Forward 
-            camera.Target += Vector3.UnitY * speed; //Forward 
-        }
-
-        
-        Vector2 mouse = MouseState.Position;
-        float Sensitivity = .2f;
-
-        if (variables.FirstMouseMove)
-        {
-            variables.lastMousePos = new Vector2(mouse.X, mouse.Y);
-            variables.FirstMouseMove = false;
-        }
-        else
-        {
-            float deltaX = mouse.X - variables.lastMousePos.X;
-            float deltaY = mouse.Y - variables.lastMousePos.Y;
-            variables.lastMousePos = new Vector2(mouse.X, mouse.Y);
-
-            variables.yaw += deltaX * Sensitivity;
-            
-            variables.pitch -= deltaY * Sensitivity;
-
-            variables.pitch = Math.Clamp(variables.pitch, -89f, 89f);
-        }
-
-        Vector3 front;
-
-        front.X =
-            MathF.Cos(MathHelper.DegreesToRadians(variables.pitch)) *
-            MathF.Cos(MathHelper.DegreesToRadians(variables.yaw));
-
-        front.Y =
-            MathF.Sin(MathHelper.DegreesToRadians(variables.pitch));
-
-        front.Z =
-            MathF.Cos(MathHelper.DegreesToRadians(variables.pitch)) *
-            MathF.Sin(MathHelper.DegreesToRadians(variables.yaw));
-
-        front = Vector3.Normalize(front);
-
-        camera.Target = camera.Position + front;
-    }
     
     public void ChangeScene(Scene NewScene)
     {
         if (NewScene == CurrentScene) return;
         
         CurrentScene.UnLoad();
-        
         CurrentScene = NewScene;
+        CurrentScene.Load();
     }
     
     //Runs every frame
@@ -163,19 +84,9 @@ public class Window : GameWindow
         DeltaTime = (float)e.Time;
 
         CurrentScene.Update();
-        
-        //Check if the Escape key is pressed
-        if (KeyboardState.IsKeyDown(Keys.Escape))
-        {
-            //When the escape key is pressed, close the window
-            Close();
-        }
 
         //Update the camera
         camera.Update();
-
-        //Move the camera
-        PlayerInput((float)e.Time);
         
         //Let the window do it's thing
         base.OnUpdateFrame(e);
@@ -346,6 +257,9 @@ public class Window : GameWindow
         //Load the window stuff
         base.OnLoad();
 
+        //Load the current scene
+        CurrentScene.Load();
+        
         //Create the vertex buffer object
         CreateVBO();
 
