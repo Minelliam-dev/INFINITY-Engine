@@ -6,7 +6,6 @@ Window window = new Window(500, 500, "New, New game engine");
 
 window.VSync = OpenTK.Windowing.Common.VSyncMode.Off;
 window.CursorState = OpenTK.Windowing.Common.CursorState.Grabbed;
-window.ShaderID = 1;
 
 Scene TestScene = new Scene(window);
 Scene SecondScene = new Scene(window);
@@ -26,19 +25,22 @@ Mesh Cone = new Mesh("./Engine/Prefabs/Shapes/Cone.obj", "./Engine/Debug/Debug-0
 Mesh Cube = new Mesh("./Engine/Prefabs/Shapes/Cube.obj", "./Engine/Debug/Debug-01.png");
 Mesh Cylinder = new Mesh("./Engine/Prefabs/Shapes/Cylinder.obj", "./Engine/Debug/Debug-01.png");
 
-Model model = new Model(Cube, new Vector3(0, 0, 0), TestScene);
+Shader BaseShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Grayscale-Fragment.glsl");
 
+Shader ToonShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Toon-Fragment.glsl");
 
-for (int i=0; i<(100); i++)
+Model model = new Model(Cube, new Vector3(0, 0, 0), TestScene, BaseShader);
+
+for (int i=0; i<(1); i++)
 {
-    Model model2 = new Model(Torus, new Vector3(3, 0, (i*3)), TestScene, Static: true);
-    Model model3 = new Model(Sphere, new Vector3(6, 0, (i*3)), TestScene, Static: true);
-    Model model4 = new Model(Plane, new Vector3(9, 0, (i*3)), TestScene, true, Static: true);
-    Model model5 = new Model(Cone, new Vector3(12, 0, (i*3)), TestScene, Static: true);
-    Model model6 = new Model(Cube, new Vector3(15, 0, (i*3)), TestScene, Static: true);
+    Model model2 = new Model(Torus, new Vector3(3, 0, (i*3)), TestScene, BaseShader, Static: true);
+    Model model3 = new Model(Sphere, new Vector3(6, 0, (i*3)), TestScene, BaseShader, Static: true);
+    Model model4 = new Model(Plane, new Vector3(9, 0, (i*3)), TestScene, BaseShader, Transparent: true, Static: true);
+    Model model5 = new Model(Cone, new Vector3(12, 0, (i*3)), TestScene, BaseShader, Static: true);
+    Model model6 = new Model(Cube, new Vector3(15, 0, (i*3)), TestScene, BaseShader, Static: true);
 }
 
-Model model0 = new Model(Cube, new Vector3(0, 0, 0), SecondScene);
+Model model0 = new Model(Cube, new Vector3(0, 0, 0), SecondScene, ToonShader);
 
 model0.scale = 2f;
 

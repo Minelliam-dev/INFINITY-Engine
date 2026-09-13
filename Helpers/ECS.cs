@@ -146,6 +146,8 @@ namespace ECS
     public class Model
     {
         public bool Enabled = false;
+
+        public Shader shaders;
         
         public Vector3 position;
         public Vector3 rotation = new Vector3(0, 0, 0);
@@ -158,11 +160,13 @@ namespace ECS
 
         public Mesh mesh;
         
-        public Model(Mesh Mesh, Vector3 Position, Scene ParentScene, bool Transparent=false, bool Static=false)
+        public Model(Mesh Mesh, Vector3 Position, Scene ParentScene, Shader shader, bool Transparent=false, bool Static=false)
         {   
             position = Position;
             IsStatic = Static;
             parentScene = ParentScene;
+
+            shaders = shader;
 
             IsTransparent = Transparent;
 
@@ -177,6 +181,8 @@ namespace ECS
         public Window window = window;
         public List<Model> Models = new List<Model>();
         public List<PointLight> Lights = new List<PointLight>();
+
+        Shader BaseShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Base-Fragment.glsl");
 
         public Action UpdateFunction = Debug.None;
         public Action StartFunction = Debug.None;
@@ -258,10 +264,13 @@ namespace ECS
 
                 Mesh OutMesh = new Mesh("§", models[0].mesh.texturePath);
 
+                
+
                 Model outModel = new Model(
                     OutMesh,
                     Vector3.Zero,
-                    this
+                    this,
+                    Models[0].shaders
                 );
 
                 OutMesh.LoadMesh(

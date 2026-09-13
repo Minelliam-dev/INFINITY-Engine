@@ -70,9 +70,6 @@ public class Window : GameWindow
     //Lighting is just a class providing a basic list of PointLights with some convinient functions
     public Lighting lighting = new Lighting();
 
-    //A variable to choose between multiple pre made (fragment) shaders 
-    public int ShaderID = 0;
-
     //The background color
     Vector3 BackgroundColor = new Vector3();
 
@@ -136,8 +133,6 @@ public class Window : GameWindow
 
         //set the backround
         if (variables.ClearScreen) GL.Clear(ClearBufferMask.ColorBufferBit);
-
-        lighting.Upload(variables.shaders);
         
         //render the current frame
         Render();
@@ -161,8 +156,10 @@ public class Window : GameWindow
     
     void RenderObject(Model Object)
     {
+        lighting.Upload(Object.shaders);
+        
         //render the vertex data
-        variables.shaders.Use();
+        Object.shaders.Use();
 
         //Set the model matrix to account for transformations and rotations
         Providematrices(Object);
@@ -287,9 +284,9 @@ public class Window : GameWindow
         variables.view = camera.view;
 
         //send the matrices to the shaders
-        variables.shaders.SetMatrix4("model", model);
-        variables.shaders.SetMatrix4("view", variables.view);
-        variables.shaders.SetMatrix4("projection", variables.projection);
+        CurrentModel.shaders.SetMatrix4("model", model);
+        CurrentModel.shaders.SetMatrix4("view", variables.view);
+        CurrentModel.shaders.SetMatrix4("projection", variables.projection);
     } 
     
     //Runs once before normal program execution
@@ -305,26 +302,7 @@ public class Window : GameWindow
         CreateVBO();
 
         //Create the vertex and fragment shaders
-        if (ShaderID == 0) //Normal
-        {
-            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Base-Fragment.glsl");
-        }
-        if (ShaderID == 1) //Toon shader
-        {
-            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Toon-Fragment.glsl");
-        }
-        if (ShaderID == 2) //Normal but without lighting
-        {
-            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/NoLighting-Fragment.glsl");
-        }
-        if (ShaderID == 3) //Grayscale version
-        {
-            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Grayscale-Fragment.glsl");
-        }
-        if (ShaderID == 4) //Inverted colors
-        {
-            variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Inverted-Fragment.glsl");
-        }
+        variables.shaders = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Base-Fragment.glsl");
 
         //create the vertex array object
         CreateVAO();
