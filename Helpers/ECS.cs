@@ -3,36 +3,25 @@ using OpenTK.Mathematics;
 
 namespace ECS
 {
-    public class Model
+    public class Mesh
     {
-        public bool Enabled = false;
-        
-        public Vector3 position;
-        public Vector3 rotation = new Vector3(0, 0, 0);
-        public float scale = 1f;
-        public string path;
-
-        public string texturePath;
-        public Texture texture;
-
-        public float[] Vertices = [];
-        public int[] Indices = [];
-
-        public int TextureHandle;
-        public Scene parentScene;
-        public bool IsTransparent;
-
         public int VBO;
         public int EBO;
         public int VAO;
         public int IndexCount;
 
-        public bool IsStatic;
+        public float[] Vertices = [];
+        public int[] Indices = [];
 
-        
-        
-        public void SetModelRaw(float[] vertices, int[] indices)
+        public Texture texture = new Texture();
+        public int TextureHandle;
+
+        public string path;
+        public string texturePath;
+
+        public void LoadMesh(float[] vertices, int[] indices)
         {
+            //texture.StartImageStuff();
             texture.Load(texturePath);
             TextureHandle = texture.Handle;
 
@@ -86,32 +75,21 @@ namespace ECS
             );
 
             GL.EnableVertexAttribArray(1);
-        
-            parentScene.Models.Add(this);
         }
         
-        public Model(string Path, Vector3 Position, Scene ParentScene, string TexturePath, bool Transparent=false, bool Static=false)
-        {   
-            position = Position;
-            path = Path;
-
-            IsStatic = Static;
-
-            parentScene = ParentScene;
-
-            IsTransparent = Transparent;
+        public Mesh(string FilePath, string TexturePath)
+        {
+            path = FilePath;
 
             texturePath = TexturePath;
 
-            texture = new Texture();
-
-            if (Path == "§") return;
+            if (FilePath == "§") return;
 
             //texture.StartImageStuff();
             texture.Load(TexturePath);
             TextureHandle = texture.Handle;
 
-            OBJLoader model = new OBJLoader(Path);
+            OBJLoader model = new OBJLoader(FilePath);
 
             model.GetModel(out Vertices, out Indices);
 
@@ -162,6 +140,33 @@ namespace ECS
             );
 
             GL.EnableVertexAttribArray(1);
+        }
+    }
+
+    public class Model
+    {
+        public bool Enabled = false;
+        
+        public Vector3 position;
+        public Vector3 rotation = new Vector3(0, 0, 0);
+        public float scale = 1f;
+
+        public Scene parentScene;
+        public bool IsTransparent;
+
+        public bool IsStatic;
+
+        public Mesh mesh;
+        
+        public Model(Mesh Mesh, Vector3 Position, Scene ParentScene, bool Transparent=false, bool Static=false)
+        {   
+            position = Position;
+            IsStatic = Static;
+            parentScene = ParentScene;
+
+            IsTransparent = Transparent;
+
+            mesh = Mesh;
         
             ParentScene.Models.Add(this);
         }
@@ -210,61 +215,62 @@ namespace ECS
             {
                 List<float> vertices = new();
                 List<int> indices = new();
-            
+
                 foreach (Model model in models)
                 {
                     int vertexOffset = vertices.Count / 5;
-            
+
                     // Add transformed vertices
-                    for (int v = 0; v < model.Vertices.Length; v += 5)
+                    for (int v = 0; v < model.mesh.Vertices.Length; v += 5)
                     {
                         Vector3 vertex = new Vector3(
-                            model.Vertices[v],
-                            model.Vertices[v + 1],
-                            model.Vertices[v + 2]
+                            model.mesh.Vertices[v],
+                            model.mesh.Vertices[v + 1],
+                            model.mesh.Vertices[v + 2]
                         );
-            
+
                         vertex *= model.scale;
-            
+
                         Matrix3 rotation =
                             Matrix3.CreateRotationX(model.rotation.X) *
                             Matrix3.CreateRotationY(model.rotation.Y) *
                             Matrix3.CreateRotationZ(model.rotation.Z);
-            
+
                         vertex = rotation * vertex;
-            
+
                         vertex += model.position;
-            
+
                         vertices.Add(vertex.X);
                         vertices.Add(vertex.Y);
                         vertices.Add(vertex.Z);
-            
+
                         // UV
-                        vertices.Add(model.Vertices[v + 3]);
-                        vertices.Add(model.Vertices[v + 4]);
+                        vertices.Add(model.mesh.Vertices[v + 3]);
+                        vertices.Add(model.mesh.Vertices[v + 4]);
                     }
-            
+
                     // Add corrected indices
-                    for (int n = 0; n < model.Indices.Length; n++)
+                    for (int n = 0; n < model.mesh.Indices.Length; n++)
                     {
-                        indices.Add(model.Indices[n] + vertexOffset);
+                        indices.Add(model.mesh.Indices[n] + vertexOffset);
                     }
                 }
-            
+
+                Mesh OutMesh = new Mesh("§", models[0].mesh.texturePath);
+
                 Model outModel = new Model(
-                    "§",
+                    OutMesh,
                     Vector3.Zero,
-                    this,
-                    models[0].texturePath
+                    this
                 );
-            
-                outModel.SetModelRaw(
+
+                OutMesh.LoadMesh(
                     vertices.ToArray(),
                     indices.ToArray()
                 );
-            
+
                 outModel.Enabled = true;
-            
+
                 window.Models.Add(outModel);
             }
 

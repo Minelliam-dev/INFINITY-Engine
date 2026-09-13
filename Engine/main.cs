@@ -168,15 +168,15 @@ public class Window : GameWindow
         Providematrices(Object);
 
         //Set the current texture to the objects specified texture
-        Object.texture.UseWithoutLoad(Object.TextureHandle);
+        Object.mesh.texture.UseWithoutLoad(Object.mesh.TextureHandle);
         
         //Set the next object to be rendered 
-        GL.BindVertexArray(Object.VAO);
+        GL.BindVertexArray(Object.mesh.VAO);
 
         //draw the current object
         GL.DrawElements(
             PrimitiveType.Triangles,
-            Object.IndexCount,
+            Object.mesh.IndexCount,
             DrawElementsType.UnsignedInt,
             0
         );
