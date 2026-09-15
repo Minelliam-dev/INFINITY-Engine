@@ -23,24 +23,26 @@ Mesh Sphere = new Mesh("./Engine/Prefabs/Shapes/Sphere.obj", "./Engine/Debug/Deb
 Mesh Plane = new Mesh("./Engine/Prefabs/Shapes/Plane.obj", "./Engine/Debug/Debug-01.png");
 Mesh Cone = new Mesh("./Engine/Prefabs/Shapes/Cone.obj", "./Engine/Debug/Debug-01.png");
 Mesh Cube = new Mesh("./Engine/Prefabs/Shapes/Cube.obj", "./Engine/Debug/Debug-01.png");
+Mesh Test = new Mesh("./Engine/Prefabs/Test.obj", "./Engine/Debug/Debug-02.png");
 Mesh Cylinder = new Mesh("./Engine/Prefabs/Shapes/Cylinder.obj", "./Engine/Debug/Debug-01.png");
 
 Shader BaseShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Grayscale-Fragment.glsl");
-
 Shader ToonShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Toon-Fragment.glsl");
+Shader InvertedShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Inverted-Fragment.glsl");
+Shader NoLightShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/NoLighting-Fragment.glsl");
 
-Model model = new Model(Cube, new Vector3(0, 0, 0), TestScene, BaseShader);
+Model model = new Model(window, Cube, new Vector3(0, 0, 0), TestScene, BaseShader);
 
 for (int i=0; i<(1); i++)
 {
-    Model model2 = new Model(Torus, new Vector3(3, 0, (i*3)), TestScene, BaseShader, Static: true);
-    Model model3 = new Model(Sphere, new Vector3(6, 0, (i*3)), TestScene, BaseShader, Static: true);
-    Model model4 = new Model(Plane, new Vector3(9, 0, (i*3)), TestScene, BaseShader, Transparent: true, Static: true);
-    Model model5 = new Model(Cone, new Vector3(12, 0, (i*3)), TestScene, BaseShader, Static: true);
-    Model model6 = new Model(Cube, new Vector3(15, 0, (i*3)), TestScene, BaseShader, Static: true);
+    Model model2 = new Model(window, Torus, new Vector3(3, 0, (i*3)), TestScene, NoLightShader, Static: false);
+    Model model3 = new Model(window, Sphere, new Vector3(6, 0, (i*3)), TestScene, ToonShader, Static: false);
+    Model model4 = new Model(window, Plane, new Vector3(9, 0, (i*3)), TestScene, InvertedShader, Transparent: true, Static: false);
+    Model model5 = new Model(window, Cone, new Vector3(12, 0, (i*3)), TestScene, NoLightShader, Static: false);
+    Model model6 = new Model(window, Cube, new Vector3(15, 0, (i*3)), TestScene, BaseShader, Static: false);
 }
 
-Model model0 = new Model(Cube, new Vector3(0, 0, 0), SecondScene, ToonShader);
+Model model0 = new Model(window, Test, new Vector3(0, 0, 0), SecondScene, ToonShader);
 
 model0.scale = 2f;
 
@@ -144,6 +146,12 @@ void Update()
         window.ChangeScene(TestScene);
     }
 
-    TestScene.Models[0].rotation.Y += (20f * window.DeltaTime);
+    //TestScene.Models[0].rotation.Y += (20f * window.DeltaTime);
     SecondScene.Models[0].rotation.Y += (20f * window.DeltaTime);
+
+    TestScene.Models[0].position = new Vector3(window.camera.Position.X, window.camera.Position.Y, TestScene.Models[0].position.Z);
+
+    CollisionInfo Info;
+
+    Debug.Log(TestScene.Models[0].collision.GetCollision(out Info));
 }

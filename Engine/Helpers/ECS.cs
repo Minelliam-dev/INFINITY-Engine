@@ -1,4 +1,3 @@
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace ECS
@@ -19,12 +18,15 @@ namespace ECS
         public bool IsStatic;
 
         public Mesh mesh;
+        public BoxCollider collision;
         
-        public Model(Mesh Mesh, Vector3 Position, Scene ParentScene, Shader shader, bool Transparent=false, bool Static=false)
+        public Model(Window win, Mesh Mesh, Vector3 Position, Scene ParentScene, Shader shader, bool Transparent=false, bool Static=false)
         {   
             position = Position;
             IsStatic = Static;
             parentScene = ParentScene;
+
+            collision = new BoxCollider(Mesh.Vertices, this, win);
 
             shaders = shader;
 
@@ -128,7 +130,7 @@ namespace ECS
 
                 
 
-                Model outModel = new Model(
+                Model outModel = new Model(window,
                     OutMesh,
                     Vector3.Zero,
                     this,
