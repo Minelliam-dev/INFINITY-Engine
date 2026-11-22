@@ -26,14 +26,15 @@ Mesh Cube = new Mesh("./Engine/Prefabs/Shapes/Cube.obj", "./Engine/Debug/Debug-0
 Mesh Test = new Mesh("./Engine/Prefabs/Test.obj", "./Engine/Debug/Debug-02.png");
 Mesh Cylinder = new Mesh("./Engine/Prefabs/Shapes/Cylinder.obj", "./Engine/Debug/Debug-01.png");
 
+Shader BugShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Bug-Fragment.glsl");
 Shader BaseShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Grayscale-Fragment.glsl");
 Shader ToonShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Toon-Fragment.glsl");
 Shader InvertedShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/Inverted-Fragment.glsl");
 Shader NoLightShader = new Shader("./Engine/Shaders/Vertex.glsl", "./Engine/Shaders/NoLighting-Fragment.glsl");
 
-Model model = new Model(window, Cube, new Vector3(0, 0, 0), TestScene, BaseShader);
+//Model model = new Model(window, Cube, new Vector3(0, 0, 0), TestScene, BaseShader);
 
-for (int i=0; i<(1); i++)
+for (int i=0; i<10; i++)
 {
     Model model2 = new Model(window, Torus, new Vector3(3, 0, (i*3)), TestScene, NoLightShader, Static: false);
     Model model3 = new Model(window, Sphere, new Vector3(6, 0, (i*3)), TestScene, ToonShader, Static: false);
@@ -42,9 +43,11 @@ for (int i=0; i<(1); i++)
     Model model6 = new Model(window, Cube, new Vector3(15, 0, (i*3)), TestScene, BaseShader, Static: false);
 }
 
-Model model0 = new Model(window, Test, new Vector3(0, 0, 0), SecondScene, ToonShader);
+Model model0 = new Model(window, Cube, new Vector3(0, 0, 0), SecondScene, ToonShader);
 
-model0.scale = 2f;
+model0.scale = new Vector3(0.5f);
+
+Sprite TestSprite = new Sprite(window, new Vector2(0, 0), "./Engine/Debug/Debug-01.png", TestScene, BaseShader);
 
 TestScene.Lights.Add(new PointLight(new Vector3(-2, -1, 0), 1f, new Vector3(3, 0, 0)));
 TestScene.Lights.Add(new PointLight(new Vector3(2, -1, 0), 1f, new Vector3(0, 3, 0)));
@@ -106,22 +109,22 @@ void PlayerInput(float Deltatime)
     {
         float deltaX = mouse.X - variables.lastMousePos.X;
         float deltaY = mouse.Y - variables.lastMousePos.Y;
-        variables.lastMousePos = new Vector2(mouse.X, mouse.Y);
+        variables.lastMousePos = new OpenTK.Mathematics.Vector2(mouse.X, mouse.Y);
         variables.yaw += deltaX * Sensitivity;
         
         variables.pitch -= deltaY * Sensitivity;
         variables.pitch = Math.Clamp(variables.pitch, -89f, 89f);
     }
-    Vector3 front;
+    OpenTK.Mathematics.Vector3 front;
     front.X =
-        MathF.Cos(MathHelper.DegreesToRadians(variables.pitch)) *
-        MathF.Cos(MathHelper.DegreesToRadians(variables.yaw));
+        MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(variables.pitch)) *
+        MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(variables.yaw));
     front.Y =
-        MathF.Sin(MathHelper.DegreesToRadians(variables.pitch));
+        MathF.Sin(OpenTK.Mathematics.MathHelper.DegreesToRadians(variables.pitch));
     front.Z =
-        MathF.Cos(MathHelper.DegreesToRadians(variables.pitch)) *
-        MathF.Sin(MathHelper.DegreesToRadians(variables.yaw));
-    front = Vector3.Normalize(front);
+        MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(variables.pitch)) *
+        MathF.Sin(OpenTK.Mathematics.MathHelper.DegreesToRadians(variables.yaw));
+    front = OpenTK.Mathematics.Vector3.Normalize(front);
     window.camera.Target = window.camera.Position + front;
 }
 
@@ -134,7 +137,7 @@ void Update()
 {
     PlayerInput(window.DeltaTime);
 
-    Debug.Log(window.FPS);
+    //Debug.Log(window.FPS);
 
     if (window.KeyboardState.IsKeyPressed(Keys.D0))
     {
@@ -149,9 +152,5 @@ void Update()
     //TestScene.Models[0].rotation.Y += (20f * window.DeltaTime);
     SecondScene.Models[0].rotation.Y += (20f * window.DeltaTime);
 
-    TestScene.Models[0].position = new Vector3(window.camera.Position.X, window.camera.Position.Y, TestScene.Models[0].position.Z);
-
-    CollisionInfo Info;
-
-    Debug.Log(TestScene.Models[0].collision.GetCollision(out Info));
+    //TestScene.Models[0].position = new Vector3(window.camera.Position.X, window.camera.Position.Y, TestScene.Models[0].position.Z);
 }

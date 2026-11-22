@@ -23,6 +23,7 @@ class Variables(int VertexBufferObject, int VertexArrayObject)
     public Matrix4 model;
     public Matrix4 view;
     public Matrix4 projection;
+    public Matrix4 projection2;
 
     public bool ClearScreen = true;
 
@@ -76,6 +77,19 @@ public class Window : GameWindow
 
     //----------Variables----------
 
+
+    //Run another constructor before the main one to avoid gnome problems
+    static Window()
+    {
+        //Check if the target OS is Linux
+        if (OperatingSystem.IsLinux())
+        {
+            //If true make it use x11 instead of wayland
+            Environment.SetEnvironmentVariable(
+                "OPENTK_4_USE_WAYLAND", "0"
+            );
+        }
+    }
 
     //Reference the pre-made window class provided by OpenTK to create a window
     public Window(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { ClientSize = (width, height), Title = title }) 
@@ -283,11 +297,31 @@ public class Window : GameWindow
         Matrix4 model = Matrix4.CreateScale(CurrentModel.scale) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(CurrentModel.rotation.X)) * Matrix4.CreateRotationY(MathHelper.DegreesToRadians(CurrentModel.rotation.Y)) * Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(CurrentModel.rotation.Z)) * Matrix4.CreateTranslation(CurrentModel.position);
         variables.view = camera.view;
 
+        GL.Enable(EnableCap.DepthTest);
+
+        if (CurrentModel.is2D)
+        {
+            GL.Disable(EnableCap.DepthTest);
+            
+            model =
+                Matrix4.CreateScale(CurrentModel.scale) *
+                Matrix4.CreateRotationZ(CurrentModel.rotation.X) *
+                Matrix4.CreateRotationZ(CurrentModel.rotation.Y) *
+                Matrix4.CreateRotationZ(CurrentModel.rotation.Z) *
+                Matrix4.CreateTranslation(CurrentModel.position.X, CurrentModel.position.Y, CurrentModel.position.Z);
+        }
+        
         //send the matrices to the shaders
         CurrentModel.shaders.SetMatrix4("model", model);
         CurrentModel.shaders.SetMatrix4("view", variables.view);
         CurrentModel.shaders.SetMatrix4("projection", variables.projection);
-    } 
+        
+        if (CurrentModel.is2D)
+        {
+            CurrentModel.shaders.SetMatrix4("view", Matrix4.Identity);
+            CurrentModel.shaders.SetMatrix4("projection", variables.projection2);
+        }
+    }
     
     //Runs once before normal program execution
     protected override void OnLoad()
@@ -326,6 +360,8 @@ public class Window : GameWindow
         variables.model = Matrix4.CreateScale(1f);
         variables.view = camera.view;
         variables.projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(camera.FOV), variables.WindowSize.X / variables.WindowSize.Y, 0.1f, 100.0f);
+
+        variables.projection2 = Matrix4.CreateOrthographicOffCenter(0, variables.WindowSize.X, variables.WindowSize.Y, 0, float.MinValue, float.MaxValue);
 
         //Give the matrices to the shaders
         variables.shaders.SetMatrix4("view", variables.view);

@@ -55,4 +55,24 @@ public class Helpers
             pos.Z / 10000
         );
     }
+
+    public static OpenTK.Mathematics.Vector3 ToOpenTKVector(System.Numerics.Vector3 inp)
+    {
+        return new OpenTK.Mathematics.Vector3(inp.X, inp.Y, inp.Z);
+    }
+
+    public static OpenTK.Mathematics.Vector2 ToOpenTKVector(System.Numerics.Vector2 inp)
+    {
+        return new OpenTK.Mathematics.Vector2(inp.X, inp.Y);
+    }
+
+    public static System.Numerics.Vector3 FromOpenTKVector(OpenTK.Mathematics.Vector3 inp)
+    {
+        return new System.Numerics.Vector3(inp.X, inp.Y, inp.Z);
+    }
+
+    public static System.Numerics.Vector2 FromOpenTKVector(OpenTK.Mathematics.Vector2 inp)
+    {
+        return new System.Numerics.Vector2(inp.X, inp.Y);
+    }
 }

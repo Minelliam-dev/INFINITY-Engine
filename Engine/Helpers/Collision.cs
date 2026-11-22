@@ -17,11 +17,9 @@ public class BoxCollider
     Model self;
     Window win;
 
-    public Vector3 Min =>
-        A * self.scale + self.position;
+    public Vector3 Min => A * self.scale + self.position;
 
-    public Vector3 Max =>
-        B * self.scale + self.position;
+    public Vector3 Max => B * self.scale * self.position;
 
     public BoxCollider(
         float[] vertices,

@@ -1,42 +1,8 @@
+//using System.Numerics;
 using OpenTK.Mathematics;
 
 namespace ECS
 {
-    public class Model
-    {
-        public bool Enabled = false;
-
-        public Shader shaders;
-        
-        public Vector3 position;
-        public Vector3 rotation = new Vector3(0, 0, 0);
-        public float scale = 1f;
-
-        public Scene parentScene;
-        public bool IsTransparent;
-
-        public bool IsStatic;
-
-        public Mesh mesh;
-        public BoxCollider collision;
-        
-        public Model(Window win, Mesh Mesh, Vector3 Position, Scene ParentScene, Shader shader, bool Transparent=false, bool Static=false)
-        {   
-            position = Position;
-            IsStatic = Static;
-            parentScene = ParentScene;
-
-            collision = new BoxCollider(Mesh.Vertices, this, win);
-
-            shaders = shader;
-
-            IsTransparent = Transparent;
-
-            mesh = Mesh;
-        
-            ParentScene.Models.Add(this);
-        }
-    }
 
     public class Scene(Window window)
     {
@@ -108,7 +74,7 @@ namespace ECS
 
                         vertex = rotation * vertex;
 
-                        vertex += model.position;
+                        //vertex += model.position;
 
                         vertices.Add(vertex.X);
                         vertices.Add(vertex.Y);
@@ -132,7 +98,7 @@ namespace ECS
 
                 Model outModel = new Model(window,
                     OutMesh,
-                    Vector3.Zero,
+                    new OpenTK.Mathematics.Vector3(0, 0, 0),
                     this,
                     Models[0].shaders
                 );
