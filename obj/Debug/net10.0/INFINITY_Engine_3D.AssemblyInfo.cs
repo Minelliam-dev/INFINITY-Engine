@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("INFINITY_Engine_3D")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc638c63087457f5ed6378c8cc49aee8f992ab6c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+61d32e972037f4769b3b2d1a41d78f00602061b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("INFINITY_Engine_3D")]
 [assembly: System.Reflection.AssemblyTitleAttribute("INFINITY_Engine_3D")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
