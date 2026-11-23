@@ -1,7 +1,6 @@
 using ECS;
 using OpenTK.Mathematics;
 
-
 public class Sprite() : Model()
 {
     
@@ -15,8 +14,6 @@ public class Sprite() : Model()
         base.position = new Vector3(0, 0, 0);
 
         base.rotation.Y = 45f;
-        base.rotation.X = 45f;
-        base.rotation.Z = 45f;
-
+        
     }
 }

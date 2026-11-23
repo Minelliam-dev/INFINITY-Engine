@@ -361,7 +361,7 @@ public class Window : GameWindow
         variables.view = camera.view;
         variables.projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(camera.FOV), variables.WindowSize.X / variables.WindowSize.Y, 0.1f, 100.0f);
 
-        variables.projection2 = Matrix4.CreateOrthographicOffCenter(0, variables.WindowSize.X, variables.WindowSize.Y, 0, float.MinValue, float.MaxValue);
+        variables.projection2 = Matrix4.CreateOrthographicOffCenter(0, variables.WindowSize.X, variables.WindowSize.Y, 0, -1000f, 1000f);
 
         //Give the matrices to the shaders
         variables.shaders.SetMatrix4("view", variables.view);
